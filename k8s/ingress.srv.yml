@@ -9,8 +9,8 @@ metadata:
     nginx.ingress.kubernetes.io/use-regex: "true"
 spec:
   rules:
-    - host: ticketing.dev
-      http:
+    # - host: ticketing.dev
+    - http:
         paths:
           - path: /
             pathType: Prefix
