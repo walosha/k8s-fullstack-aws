@@ -3,7 +3,8 @@ on:
   push:
     branches:
       - develop
-
+env:
+  SHA: ${{ $(git rev-parse HEAD) }}
 jobs:
   deploy:
     name: Build Image
