@@ -10,8 +10,3 @@ docker push walosha/multi-worker:latest
 docker push walosha/multi-client:$SHA
 docker push walosha/multi-server:$SHA
 docker push walosha/multi-worker:$SHA
-
-# kubectl apply -f k8s
-# kubectl set image deployments/client-deployment client=walosha/multi-client:$SHA
-# kubectl set image deployments/server-deployment server=walosha/multi-server:$SHA
-# kubectl set image deployments/worker-deployment worker=walosha/multi-worker:$SHA
