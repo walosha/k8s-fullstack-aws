@@ -15,14 +15,7 @@ jobs:
       - name: Deploy to Docker HUb
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t walosha/multi-client -f ./client/Dockerfile ./client
-          docker build -t walosha/multi-nginx -f ./nginx/Dockerfile ./nginx
-          docker build -t walosha/multi-server -f ./server/Dockerfile ./server
-          docker build -t walosha/multi-worker -f ./worker/Dockerfile ./worker
-          docker push walosha/multi-client
-          docker push walosha/multi-nginx
-          docker push walosha/multi-server
-          docker push walosha/multi-worker
+          bash ./deploy.sh
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v2.0
@@ -39,6 +32,3 @@ jobs:
 
       - name: Update kube config
         run: aws eks update-kubeconfig --name k8s-tutorial --region us-east-1
-
-      - name: Deploy to EKS
-        run: bash ./deploy.sh
