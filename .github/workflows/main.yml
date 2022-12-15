@@ -15,10 +15,10 @@ jobs:
       - name: Deploy to Docker HUb
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          docker build -t walosha/multi-client -f ./client/Dockerfile.dev ./client
-          docker build -t walosha/multi-nginx -f ./nginx/Dockerfile.dev ./nginx
-          docker build -t walosha/multi-server -f ./server/Dockerfile.dev ./server
-          docker build -t walosha/multi-worker -f ./worker/Dockerfile.dev ./worker
+          docker build -t walosha/multi-client -f ./client/Dockerfile ./client
+          docker build -t walosha/multi-nginx -f ./nginx/Dockerfile ./nginx
+          docker build -t walosha/multi-server -f ./server/Dockerfile ./server
+          docker build -t walosha/multi-worker -f ./worker/Dockerfile ./worker
           docker push walosha/multi-client
           docker push walosha/multi-nginx
           docker push walosha/multi-server
