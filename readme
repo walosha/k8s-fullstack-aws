@@ -1,0 +1,43 @@
+# Deploy k8s-tutorial app to AWS EKS
+
+- kubectl create serviceaccount --namespace kube-system tiller
+
+- kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
+
+
+## INstall Helm v3
+- curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+- chmod 700 get_helm.sh
+- ./get_helm.sh
+- sudo yum install openssl
+- helm version --short | cut -d + -f 1
+- helm init --service-account tiller  --upgrade (deprecated, no longer needed!)
+
+
+## install on AWS AWS¶ using cloudshell
+
+`
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
+
+`
+### Run on cloudshell
+
+- kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/aws/deploy.yaml
+
+### Download the deploy.yaml template
+
+- wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml
+
+### Edit the file and change the VPC CIDR in use for the Kubernetes cluster:
+
+- proxy-real-ip-cidr: XXX.XXX.XXX/XX
+
+### Change the AWS Certificate Manager (ACM) ID as well:
+
+- arn:aws:acm:us-west-2:XXXXXXXX:certificate/XXXXXX-XXXXXXX-XXXXXXX-XXXXXXXX
+
+### Deploy the manifest:
+
+kubectl apply -f deploy.yaml
