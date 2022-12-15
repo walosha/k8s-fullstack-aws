@@ -1,133 +1,50 @@
-# Source: https://gist.github.com/681a5f4455428379e00bc815450e12d8
+# Deploy k8s-tutorial app to AWS EKS
 
-#############################################
+- kubectl create serviceaccount --namespace kube-system tiller
 
-# eksctl
+- kubectl create clusterrolebinding tiller-cluster-rule --clusterrole=cluster-admin --serviceaccount=kube-system:tiller
 
-# How to Create and Manage AWS EKS clustersrole
 
-# https://youtu.be/pNECqaxyewQ
+## INstall Helm v3
+- curl https://raw.githubusercontent.com/helm/helm/master/scripts/get-helm-3 > get_helm.sh
+- chmod 700 get_helm.sh
+- ./get_helm.sh
+- sudo yum install openssl
+- helm version --short | cut -d + -f 1
+- helm init --service-account tiller  --upgrade (deprecated, no longer needed!)
 
-#############################################
 
-#########
+## install on AWS AWS¶ using cloudshell
 
-# Setup
+`
+helm upgrade --install ingress-nginx ingress-nginx \
+  --repo https://kubernetes.github.io/ingress-nginx \
+  --namespace ingress-nginx --create-namespace
 
-#########
+`
+### Run on cloudshell
 
-# Install the CLI from https://eksctl.io/introduction/#installation
+- kubectl apply -f https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/aws/deploy.yaml
 
-export AWS_ACCESS_KEY_ID=[...]
+### Download the deploy.yaml template
 
-export AWS_SECRET_ACCESS_KEY=[...]
+- wget https://raw.githubusercontent.com/kubernetes/ingress-nginx/controller-v1.5.1/deploy/static/provider/aws/nlb-with-tls-termination/deploy.yaml
 
-export KUBECONFIG=$PWD/kubeconfig.yaml
+### Edit the file and change the VPC CIDR in use for the Kubernetes cluster:
 
-###############################
+- proxy-real-ip-cidr: XXX.XXX.XXX/XX
 
-# How NOT to create a cluster
+### Change the AWS Certificate Manager (ACM) ID as well:
 
-###############################
+- arn:aws:acm:us-west-2:XXXXXXXX:certificate/XXXXXX-XXXXXXX-XXXXXXX-XXXXXXXX
 
-# Do NOT do this!
+### Deploy the manifest:
 
-# eksctl create cluster
+kubectl apply -f deploy.yaml
 
-# Do NOT do this!
 
-# eksctl create cluster \
 
-# --name devops-catalog \
-
-# --region us-east-2 \
-
-# --version 1.18 \
-
-# --nodegroup-name primary \
-
-# --node-type t2.small \
-
-# --nodes-min 3 \
-
-# --nodes-max 6 \
-
-# --managed \
-
-# --spot \
-
-# --asg-access \
-
-# --full-ecr-access
-
-######################
-
-# Creating a cluster
-
-######################
-
-git clone \
- https://github.com/vfarcic/eksctl-demo.git
-
-cd eksctl-demo
-
-cat cluster-1.23.yaml
-
-# Open https://eksctl.io/usage/schema/
-
-eksctl create cluster \
- --config-file cluster-1.17.yaml
-
-##########################
-
-# Exploring the outcomes
-
-##########################
-
-# Open AWS Web Console and make sure that us-east-2 is selected
-
-eksctl get clusters --region us-east-2
-
-kubectl get nodes
-
-###############################
-
-# How NOT to scale a cluster
-
-###############################
-
-# Do NOT do this
-
-# eksctl scale nodegroup \
-
-# --cluster devops-catalog \
-
-# --nodes 4 \
-
-# --name primary
-
-# Cluster Autoscaler?
-
-# Open https://docs.aws.amazon.com/eks/latest/userguide/cluster-autoscaler.html
-
-###############################
-
-# Upgrading the control plane
-
-###############################
-
-diff cluster-1.17.yaml \
- cluster-1.18.yaml
-
-eksctl upgrade cluster \
- --config-file cluster-1.18.yaml
-
-eksctl upgrade cluster \
- --config-file cluster-1.18.yaml \
- --approve
-
-kubectl get nodes
-
+///////////////////////////////////////////////////////////////////////////////////////////////////
 ##########################
 
 # Upgrading worker nodes
