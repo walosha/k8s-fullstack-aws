@@ -15,7 +15,7 @@ jobs:
       - name: Deploy to Docker HUb
         run: |
           docker login -u ${{ secrets.DOCKER_USERNAME }} -p ${{ secrets.DOCKER_PASSWORD }}
-          bash ./deploy.sh
+          ${PWD}/deploy.sh
 
       - name: Install kubectl
         uses: azure/setup-kubectl@v2.0
